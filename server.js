@@ -30,7 +30,11 @@ app.post('/vindi/assinatura', async (req, res) => {
           name,
           email,
           registry_code: cpf,
-          contacts: [{ name, email, phone }]
+          contacts: [{
+            name: `Contato de ${name}`,
+            email,
+            phone
+          }]
         }
       })
     });
