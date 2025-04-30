@@ -27,7 +27,7 @@ app.post('/vindi/assinatura', async (req, res) => {
       },
       body: JSON.stringify({
         customer: {
-          name,
+          name: name?.trim() || 'Cliente Shopify',
           email,
           registry_code: cpf,
           contacts: [{
