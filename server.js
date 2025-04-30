@@ -7,12 +7,11 @@ const port = process.env.PORT;
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // permite chamadas de qualquer origem
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-
 
 const API_KEY_BASE64 = process.env.API_KEY_BASE64;
 
@@ -37,7 +36,10 @@ app.post('/vindi/assinatura', async (req, res) => {
     });
 
     const customerData = await customerRes.json();
-    const customerId = customerData.customer.id;
+    console.log('Customer data:', customerData);
+
+    const customerId = customerData.customer?.id;
+    if (!customerId) throw new Error("Erro ao criar cliente");
 
     const subscriptionRes = await fetch('https://app.vindi.com.br/api/v1/subscriptions', {
       method: 'POST',
@@ -52,6 +54,9 @@ app.post('/vindi/assinatura', async (req, res) => {
         }
       })
     });
+
+    const subscriptionData = await subscriptionRes.json();
+    console.log('Subscription data:', subscriptionData);
 
     const tokenRes = await fetch('https://app.vindi.com.br/api/v1/payment_profile_tokens', {
       method: 'POST',
@@ -69,10 +74,16 @@ app.post('/vindi/assinatura', async (req, res) => {
     });
 
     const tokenData = await tokenRes.json();
-    res.json({ redirect_url: tokenData.payment_profile_token.url });
+    console.log('Token data:', tokenData);
+
+    if (tokenData.payment_profile_token && tokenData.payment_profile_token.url) {
+      res.json({ redirect_url: tokenData.payment_profile_token.url });
+    } else {
+      res.status(500).json({ error: 'Erro ao gerar link de pagamento' });
+    }
 
   } catch (error) {
-    console.error(error);
+    console.error('Erro no backend:', error);
     res.status(500).json({ error: 'Erro na criação da assinatura' });
   }
 });
