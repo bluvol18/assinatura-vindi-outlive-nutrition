@@ -14,8 +14,7 @@ app.use((req, res, next) => {
 });
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const PAGINA_ID = '64136'; // ID da página de pagamento criada na Vindi
-const SUBDOMINIO_VINDI = 'outlivenutrition'; // subdomínio da sua conta Vindi
+const PAGINA_URL = 'https://app.vindi.com.br/customer/pages/324cf5c3-89b8-48a8-8317-3a02db4c50aa/subscriptions/new';
 
 app.post('/vindi/assinatura', async (req, res) => {
   try {
@@ -38,7 +37,7 @@ app.post('/vindi/assinatura', async (req, res) => {
 
     const token = jwt.sign(payload, JWT_SECRET);
 
-    const redirectUrl = `https://${SUBDOMINIO_VINDI}.vindi.com.br/pages/${PAGINA_ID}?token=${token}`;
+    const redirectUrl = `${PAGINA_URL}?token=${token}`;
     res.json({ redirect_url: redirectUrl });
 
   } catch (error) {
