@@ -6,6 +6,14 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // permite chamadas de qualquer origem
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
+
 const API_KEY_BASE64 = process.env.API_KEY_BASE64;
 
 app.post('/vindi/assinatura', async (req, res) => {
